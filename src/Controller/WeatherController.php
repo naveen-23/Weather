@@ -12,6 +12,9 @@ class WeatherController extends AbstractController
 {
 
 	/** @Route("/api/v{no}/get-weather/{cityName}", name="get_weather", methods={"GET"})
+	*  @Param string cityName 
+	*  @Param Request request
+	*  @Param WeatherService weatherService
 	* @return Symfony\Component\HttpFoundation\JsonResponse
 	*/
 	public function getWeatherAction(Request $request,string $cityName,WeatherService $weatherService) : JsonResponse
@@ -30,6 +33,9 @@ class WeatherController extends AbstractController
 		return $this->json($data);
 	}
 
+	/**
+	*  @Param string cityName 
+	*/
 	private function validateRequestData(string $cityName) :string 
 	{
 		$cityName = filter_var($cityName, FILTER_SANITIZE_STRING);
