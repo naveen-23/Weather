@@ -9,7 +9,7 @@ class Weather
     */
 	private $jsonData;
 
-	const REQ_FIELDS = ['weather','temp','wind'];
+	const REQ_FIELDS = ['weather'=>'weather_type','temp'=>'temparature','wind'=>'wind'];
 
 	public function getJsonData()
 	{
@@ -25,20 +25,20 @@ class Weather
 		$reqData = [] ;
 		foreach($this->jsonData as $ky =>$list)
 		{
-			if(in_array($ky,SELF::REQ_FIELDS))
+			if(in_array($ky,array_keys(SELF::REQ_FIELDS)))
 			{
-				$reqData[$ky]=$list;
+				$reqData[self::REQ_FIELDS[$ky]]=$list;
 			}
 
 			if(is_array($list))
 			{
 				foreach($list as $j=>$val)
 				{
-					if(in_array($j,SELF::REQ_FIELDS))
+					if(in_array($j,array_keys(SELF::REQ_FIELDS)))
 					{
 						if(is_string($j))
 						{
-							$reqData[$j]=$val;	
+							$reqData[self::REQ_FIELDS[$j]]=$val;	
 						}
 					}
 				}

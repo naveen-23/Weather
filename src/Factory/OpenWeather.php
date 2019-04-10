@@ -6,7 +6,7 @@ use App\Model\Weather;
 class OpenWeather implements WeatherFactoryInterface
 {	
 	// since its Restricted by API Key using a sample json below
-	const BASE_URL = "https://api.openweathermap.org/data/2.5/weather";
+	const BASE_URL = "https://samples.openweathermap.org/data/2.5/weather";
 
 	//const BASE_URL = 'http://localhost/weather.json';
 	CONST API_KEY = '2fa8dfcd39e66b46014e6c9765351a90';
@@ -20,12 +20,12 @@ class OpenWeather implements WeatherFactoryInterface
 	{
 		try 
 		{
-		$param = "?".$cityName.'&appid='.SELF::API_KEY;
+		$param = "?q=".$cityName.'&appid='.SELF::API_KEY;
+
 		$client = new \GuzzleHttp\Client(['base_uri' => SELF::BASE_URL]);
 		
 		$returnData = [];
 		$response = $client->request('GET', $param);
-		
 
 			if($response->getStatusCode() == 200){
 				$data = json_decode($response->getBody(),true);
@@ -34,12 +34,10 @@ class OpenWeather implements WeatherFactoryInterface
 				$weather->setJsonData($data);
 
 				$returnData = $weather->getRequriedData();
+
 			}
 		} catch (\Exception $ex)
 		{
-
-			var_dump($ex->getMessage());
-			exit();
 			return ['error'=>$ex->getMessage()];
 		}
 
