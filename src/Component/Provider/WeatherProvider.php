@@ -7,6 +7,12 @@ use App\Factory\WeatherFactoryInterface;
 
 class WeatherProvider implements WeatherProviderInterface
 {
+
+	public function __construct($baseUrl,$apiKey)
+	{
+		$this->baseUrl = $baseUrl;
+		$this->apiKey = $apiKey;
+	}
 	/**
      * @param int $providerType
      *
@@ -27,6 +33,9 @@ class WeatherProvider implements WeatherProviderInterface
 				$weatherProvider = new OpenWeather();
 				break;
 		}
+
+		$weatherProvider->setBaseUrl($this->baseUrl);
+		$weatherProvider->setApiKey($this->apiKey);
 
 		return $weatherProvider;
 	}

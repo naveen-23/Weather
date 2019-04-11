@@ -7,25 +7,29 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use App\Service\WeatherService;
+use App\Constants\AppConstants;
 
 class WeatherController extends AbstractController
 {
 
 	/** @Route("/api/v{no}/get-weather/{cityName}", name="get_weather", methods={"GET"})
-	*  @Param string cityName 
-	*  @Param Request request
-	*  @Param WeatherService weatherService
+	*  @param string cityName 
+	*  @param Request request
+	*  @param WeatherService weatherService
 	* @return Symfony\Component\HttpFoundation\JsonResponse
 	*/
 	public function getWeatherAction(Request $request,string $cityName,WeatherService $weatherService) : JsonResponse
 	{
 		$cityName = $this->validateRequestData($cityName);
 
-		$data = $weatherService->getWeatherData($cityName);	
-
-		if(isset($data['error']))
+		try 
 		{
-			$response = ['status'=>'failed','msg'=>'Something went wrong'];
+			$data = $weatherService->getWeatherData($cityName);		
+		} catch(\Exception $ex)
+		{
+			$response = ['status'=>AppConstants::STATUS_FAILED, 
+						 'statusCode'=>AppConstants::SOMETHING_WRONG,
+						 'msg'=>AppConstants::$errorCodes[AppConstants::SOMETHING_WRONG]];
 
 			return $this->json($response);
 		}
@@ -34,7 +38,7 @@ class WeatherController extends AbstractController
 	}
 
 	/**
-	*  @Param string cityName 
+	*  @param string cityName 
 	*/
 	private function validateRequestData(string $cityName) :string 
 	{

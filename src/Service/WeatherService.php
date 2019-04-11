@@ -7,12 +7,17 @@ use App\Component\Provider\WeatherProvider;
 
 class WeatherService 
 {
+	public function __construct($baseUrl,$apiKey)
+	{
+		$this->baseUrl = $baseUrl;
+		$this->apiKey = $apiKey;
+	}
 	/*
 	* Gets weather provider 
 	*/
 	public function getWeatherProvider()
 	{
-		$weatherProvider = new WeatherProvider();
+		$weatherProvider = new WeatherProvider($this->baseUrl,$this->apiKey);
 		$weatherProvider = $weatherProvider->getProvider(WeatherConstants::OPEN_WEATHER);
 
 		return $weatherProvider;

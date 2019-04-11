@@ -1,55 +1,151 @@
 <?php 
 namespace App\Factory;
 use GuzzleHttp\Client;
-use App\Model\Weather;
+use Symfony\Component\HttpFoundation\Response;
+use App\Constants\AppConstants;
 
 class OpenWeather implements WeatherFactoryInterface
 {	
-	// since its Restricted by API Key using a sample json below
-	const BASE_URL = "https://samples.openweathermap.org/data/2.5/weather";
 
-	//const BASE_URL = 'http://localhost/weather.json';
-	CONST API_KEY = '2fa8dfcd39e66b46014e6c9765351a90';
-	// 
+	private $baseUrl;
+	private $apiKey;
+	private $jsonData;
+	private $reqData;
+
+	/**
+	*  @param string baseUrl
+	*/
+	public function setBaseUrl($baseUrl):void
+	{
+		$this->baseUrl = $baseUrl;
+	}
+
+	/**
+	*  @param string apiKey
+	*/
+	public function setApiKey($apiKey):void
+	{
+		$this->apiKey = $apiKey;
+	}
 	
 	/**
-	*  @Param string cityName 
+	*  @param json jsonData
+	*/
+	public function setJsonData($jsonData):void
+	{
+		$this->jsonData = $jsonData;
+	}
+	public function getJsondata()
+	{
+		return $this->jsonData;
+	}
+	/**
+	*  @param string cityName 
 	*	@return array
 	*/
 	public function getResponse(string $cityName):array
 	{
 		try 
 		{
-		$param = "?q=".$cityName.'&appid='.SELF::API_KEY;
+			$param = $this->getParams($cityName);
+			$client = new \GuzzleHttp\Client(['base_uri' => $this->baseUrl]);
 
-		$client = new \GuzzleHttp\Client(['base_uri' => SELF::BASE_URL]);
-		
-		$returnData = [];
-		$response = $client->request('GET', $param);
+			$returnData = [];
+			$response = $client->request('GET', $param);
 
-			if($response->getStatusCode() == 200){
+			if($response->getStatusCode() == Response::HTTP_OK){
 				$data = json_decode($response->getBody(),true);
 
-				$weather = new Weather();
-				$weather->setJsonData($data);
-
-				$returnData = $weather->getRequriedData();
-
+				$this->setJsonData($data);
+				return $this->getJsondata();
 			}
 		} catch (\Exception $ex)
 		{
-			return ['error'=>$ex->getMessage()];
+			throw new \Exception('Response fetch failed');
 		}
 
 		return $returnData;
 	}
 
 	/**
-	*  @Param array data 
+	*  @param array data 
 	*	@return array
 	*/
 	public function transformResponse(array $data):array
 	{
-		return $data;
+		$this->reqData = $this->getRequriedData();
+
+		return $this->reqData;
+	}
+
+	/**
+	*  @param String cityName
+	*	@return string
+	*/
+	public function getParams(string $cityName):string
+	{
+		$param = '?q='.$cityName.'&appid='.$this->apiKey;
+
+		return $param;
+	}
+
+	public function getRequriedData()
+	{
+		$reqData = [] ;
+		// Loop through the json and fetch only the required fields
+		foreach($this->jsonData as $ky =>$list)
+		{
+			if(in_array($ky,array_keys(AppConstants::REQ_FIELDS)))
+			{
+				$val = $list;
+				
+				if($ky == AppConstants::CONVERT_FIELDS)
+				{
+					// use only main for field
+					$val = $list[0]['main'];
+				}
+				if($ky == AppConstants::FORMAT_FIELD_MAIN)
+				{
+					$val[AppConstants::FORMAT_FIELDS]= $this->getDirection($val[AppConstants::FORMAT_FIELDS]);
+				}
+				$reqData[AppConstants::REQ_FIELDS[$ky]]=$val;
+			}
+
+			if(is_array($list))
+			{
+				foreach($list as $j=>$val)
+				{
+					if(in_array($j,array_keys(AppConstants::REQ_FIELDS)))
+					{
+						if(is_string($j))
+						{
+							$reqData[AppConstants::REQ_FIELDS[$j]]=$val;
+						}
+					}
+				}
+			}
+		}
+		return $reqData;
+	}
+
+	public function getDirection($val)
+	{
+		$direction ='';
+
+		if($val >0 && $val <=90)
+		{
+			$direction = AppConstants::DIR_EAST;
+		} elseif($val >90 && $val <= 180)
+		{
+			$direction = AppConstants::DIR_SOUTH;
+		} elseif($val > 180 && $val < 270)
+		{
+			$direction = AppConstants::DIR_WEST;
+		} elseif($val > 270 && $val <= 360)
+		{
+			$direction = AppConstants::DIR_NORTH;
+		} 
+
+		return $direction;
 	}
 }
