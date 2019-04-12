@@ -14,6 +14,7 @@ class WeatherProvider implements WeatherProviderInterface
 		$this->apiKey = $apiKey;
 	}
 	/**
+	 * Creates an object for fetching the weather details
      * @param int $providerType
      *
      * @return WeatherFactoryInterface

@@ -13,6 +13,7 @@ class WeatherController extends AbstractController
 {
 
 	/** @Route("/api/v{no}/get-weather/{cityName}", name="get_weather", methods={"GET"})
+	*  Get weather information based on city name
 	*  @param string cityName 
 	*  @param Request request
 	*  @param WeatherService weatherService
@@ -38,6 +39,7 @@ class WeatherController extends AbstractController
 	}
 
 	/**
+	* Validate the city name passed
 	*  @param string cityName 
 	*/
 	private function validateRequestData(string $cityName) :string 

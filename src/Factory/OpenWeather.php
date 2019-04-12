@@ -40,6 +40,7 @@ class OpenWeather implements WeatherFactoryInterface
 		return $this->jsonData;
 	}
 	/**
+	*  Gets the Response from the API
 	*  @param string cityName 
 	*	@return array
 	*/
@@ -68,7 +69,8 @@ class OpenWeather implements WeatherFactoryInterface
 	}
 
 	/**
-	*  @param array data 
+	* Transform the response to user required format
+	*   @param array data 
 	*	@return array
 	*/
 	public function transformResponse(array $data):array
@@ -79,8 +81,9 @@ class OpenWeather implements WeatherFactoryInterface
 	}
 
 	/**
+	*  Makes the Params list for fetching the api response
 	*  @param String cityName
-	*	@return string
+	*  @return string
 	*/
 	public function getParams(string $cityName):string
 	{
@@ -128,10 +131,16 @@ class OpenWeather implements WeatherFactoryInterface
 		return $reqData;
 	}
 
-	public function getDirection($val)
+	/**
+	* return direction based on degree passed
+	* @param string val
+	* @return string
+	*/
+	public function getDirection(string $val):string
 	{
 		$direction ='';
 
+		// if degree is greather than 0 and less than 90 , then east direction
 		if($val >0 && $val <=90)
 		{
 			$direction = AppConstants::DIR_EAST;

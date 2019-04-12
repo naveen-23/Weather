@@ -6,6 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 class WeatherTest extends TestCase
 {
+	/**
+	* Test if the API is working
+	*/
     public function testWeather()
     {
     	$client = new \GuzzleHttp\Client(['base_uri' => 'http://127.0.0.1:8000/api/v1/get-weather/bangalore']);

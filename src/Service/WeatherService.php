@@ -23,6 +23,7 @@ class WeatherService
 		return $weatherProvider;
 	}
 	/**
+	* get weather information for a city
 	*  @Param string cityName 
 	*	@return array
 	*/
