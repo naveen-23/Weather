@@ -92,6 +92,9 @@ class OpenWeather implements WeatherFactoryInterface
 		return $param;
 	}
 
+	/**
+	*	Loop through the json response and fetch only required fields
+	*/
 	public function getRequriedData()
 	{
 		$reqData = [] ;
