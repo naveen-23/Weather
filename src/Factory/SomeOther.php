@@ -77,10 +77,10 @@ class SomeOther implements WeatherProviderFactoryInterface
      *
      * @param array $weather weather model
      *
-     * @return array
+     * @return null
      */
-    public function transformResponse(Weather $weather):array
+    public function transformResponse(Weather $weather):void
     {
-        return $data;
+        $weather->applyTransformation();
     }
 }

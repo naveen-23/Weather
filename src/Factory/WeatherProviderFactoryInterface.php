@@ -61,5 +61,5 @@ interface WeatherProviderFactoryInterface
      *
      * @return null
      */
-    public function transformResponse(Weather $weather):array;
+    public function transformResponse(Weather $weather):void;
 }

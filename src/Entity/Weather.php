@@ -16,6 +16,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use App\Constants\AppConstants;
+use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * Weather class   
  *
@@ -57,6 +58,7 @@ class Weather
      * Representation data
      *
      * @ORM\Column(type="string", length=255)
+     * @Groups({"admins"})
      */
     private $_representationData;
 
@@ -102,7 +104,7 @@ class Weather
      */
     public function getResponse()
     {
-        return json_decode($this->_response, true);
+        return $this->_response;
     }
 
     /** 
@@ -190,74 +192,26 @@ class Weather
         return $this;
     }
 
-    /**
-     *    Loop through the json response and fetch only required fields
-     *
-     * @return null
-     */
-    public function applyTransformation():void
-    {
-        $this->_representationData = [] ;
-
-        // Loop through the json and fetch only the required fields
-        foreach ($this->_response as $ky =>$list) {
-            if (in_array($ky, array_keys(AppConstants::REQ_FIELDS))) {
-                $val = $list;
-                
-                if ($ky == AppConstants::CONVERT_FIELDS) {
-                    // use only main for field
-                    $val = $list[0]['main'];
-                }
-                if ($ky == AppConstants::FORMAT_FIELD_MAIN) {
-                    $val[AppConstants::FORMAT_FIELDS] = $this->getDirection($val[AppConstants::FORMAT_FIELDS]);
-                }
-                $this->_representationData[AppConstants::REQ_FIELDS[$ky]]=$val;
-            }
-
-            if (is_array($list)) {
-                foreach ($list as $j=>$val) {
-                    if (in_array($j, array_keys(AppConstants::REQ_FIELDS))) {
-                        if (is_string($j)) {
-                            $this->_representationData[AppConstants::REQ_FIELDS[$j]]=$val;
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Return direction based on degree passed
-     *
-     * @param string $degree degree
-     *
-     * @return string
-     */
-    public function getDirection(string $degree):string
-    {
-        $direction ='';
-
-        // if degree is greather than 0 and less than 90 , then east direction
-        if ($degree >0 && $degree <=90) {
-            $direction = AppConstants::DIR_EAST;
-        } elseif ($degree >90 && $degree <= 180) {
-            $direction = AppConstants::DIR_SOUTH;
-        } elseif ($degree > 180 && $degree < 270) {
-            $direction = AppConstants::DIR_WEST;
-        } elseif ($degree > 270 && $degree <= 360) {
-            $direction = AppConstants::DIR_NORTH;
-        }
-
-        return $direction;
-    }
+    
 
     /**
      * Return representation data 
      *
      * @return string 
      */
-    public function getRepresentationData():array
+    public function getRepresentationData():?array
     {
         return $this->_representationData;
+    }
+    /**
+     * Set representation data 
+     *
+     * @param json $representationData representationData object
+     *
+     * @return null
+     */
+    public function setRepresentationData($representationData):void
+    {
+        $this->_representationData = $representationData;
     }
 }

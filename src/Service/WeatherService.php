@@ -18,6 +18,10 @@ use App\Constants\WeatherConstants;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Component\Provider\WeatherProvider;
 use App\Factory\WeatherProviderFactoryInterface;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
+
 
 /**
  * Get weather data service
@@ -64,14 +68,20 @@ class WeatherService
      *
      * @return array
      */
-    public function getWeatherData(string $cityName) : array
+    public function getWeatherData(string $cityName) : ?array
     {
         $weatherProvider = $this->getWeatherProvider();
 
         $weatherObj = $weatherProvider->getResponseObj($cityName);
 
-        $weatherData = $weatherObj->applyTransformation();
+        $weatherProvider->applyTransformation($weatherObj);
+        $encoders = [ new JsonEncoder()];
+        $normalizers = [new ObjectNormalizer()];
 
-        return $weatherObj->getRepresentationData();
+        $serializer = new Serializer($normalizers, $encoders);
+        $data = $weatherObj->getRepresentationData();
+        $jsonContent = $serializer->serialize($weatherObj, 'json', ['groups' => 'admins']);
+        $data = json_decode($jsonContent,true);
+        return $data['representationData'];
     }
 }
