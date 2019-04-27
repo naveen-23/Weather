@@ -79,7 +79,7 @@ class WeatherService
         $normalizers = [new ObjectNormalizer()];
 
         $serializer = new Serializer($normalizers, $encoders);
-        $data = $weatherObj->getRepresentationData();
+        
         $jsonContent = $serializer->serialize($weatherObj, 'json', ['groups' => 'admins']);
         $data = json_decode($jsonContent,true);
         return $data['representationData'];
