@@ -1,27 +1,49 @@
-<?php 
+<?php
+/**
+ * Constants for the App
+ *
+ * PHP version 7.2 *
+ *
+ * @category Weather
+ * @package  Open_Weather
+ * @author   Test <testemail@gmail.com>
+ * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @version  GIT: 0.1
+ * @link     http://localhost
+ */
+
 namespace App\Constants;
 
-class AppConstants 
+/**
+ *   Define constants for the application
+ *
+ * @category Weather
+ * @package  Open_Weather
+ * @author   Test <testemail@gmail.com>
+ * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @link     http://localhost
+ */
+class AppConstants
 {
+    const SOMETHING_WRONG =1000;
 
-	CONST SOMETHING_WRONG =1000;
 
+    const STATUS_FAILED = 'failed';
+    const STATUS_SUCCESS = 'success';
 
-	CONST STATUS_FAILED = 'failed';
-	CONST STATUS_SUCCESS = 'success';
+    public static $errorCodes =[self::SOMETHING_WRONG=>'Something went wrong '];
 
-	public static $errorCodes =
-		[self::SOMETHING_WRONG=>'Something went wrong '];
+    const REQ_FIELDS = ['weather'=>'weather_type',
+                        'temp'=>'temparature',
+                        'wind'=>'wind'];
+    
+    const CONVERT_FIELDS = 'weather';
 
-	const REQ_FIELDS = ['weather'=>'weather_type','temp'=>'temparature','wind'=>'wind'];
-	
-	const CONVERT_FIELDS = 'weather';	
+    const FORMAT_FIELD_MAIN = 'wind';
+    const FORMAT_FIELDS = 'deg';
 
-	CONST FORMAT_FIELD_MAIN = 'wind';
-	CONST FORMAT_FIELDS = 'deg';
-
-	CONST DIR_EAST = 'East';
-	CONST DIR_WEST = 'West';
-	CONST DIR_North = 'North';
-	CONST DIR_SOUTH = 'South';
+    const DIR_EAST = 'East';
+    const DIR_WEST = 'West';
+    const DIR_NORTH = 'North';
+    const DIR_SOUTH = 'South';
 }

@@ -2,7 +2,7 @@
 /** 
  * PHP version 7.2 *
  *
- * Component for Weather provider
+ * Weather Service for getting Weather data in requried format
  *
  * @category Weather
  * @package  Open_Weather
@@ -13,10 +13,11 @@
  */
 
 namespace App\Factory;
+
 use App\Entity\Weather;
 
 /**
- * Weather object interface
+ * Weather object factory
  *
  * @category Weather
  * @package  Open_Weather
@@ -24,16 +25,19 @@ use App\Entity\Weather;
  * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
  * @link     http://localhost
  */
-
-class WeatherFactoryInterface
+  
+class WeatherFactory
 {
     /** 
      * Get weather object
      *
+     * @param array  $data   weather data
+     * @param string $source source name
+     *
      * @return Weather
      */
-    public function getWeatherObj():Weather
+    public function getWeatherObj(array $data,string $source):Weather
     {
-        
+        return new Weather($data, $source);
     }
 }

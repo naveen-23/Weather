@@ -1,163 +1,124 @@
-<?php 
+<?php
+/** 
+ * PHP version 7.2 *
+ *
+ * Component for Weather provider
+ *
+ * @category Weather
+ * @package  Open_Weather
+ * @author   Test <testemail@gmail.com>
+ * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @version  GIT: <0.1>
+ * @link     http://localhost
+ */
+
 namespace App\Factory;
+
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Response;
 use App\Constants\AppConstants;
+use App\Factory\WeatherFactory;
+use App\Entity\Weather;
 
-class OpenWeather implements WeatherFactoryInterface
-{	
+/**
+ * Open weather provider 
+ *
+ * @category Weather
+ * @package  Open_Weather
+ * @author   Test <testemail@gmail.com>
+ * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @link     http://localhost
+ */
 
-	private $baseUrl;
-	private $apiKey;
-	private $jsonData;
-	private $reqData;
+class OpenWeather implements WeatherProviderFactoryInterface
+{
+    private $_baseUrl;
+    private $_apiKey;
 
-	/**
-	*  @param string baseUrl
-	*/
-	public function setBaseUrl($baseUrl):void
-	{
-		$this->baseUrl = $baseUrl;
-	}
+    CONST SOURCE_NAME = 'Open Weather';
 
-	/**
-	*  @param string apiKey
-	*/
-	public function setApiKey($apiKey):void
-	{
-		$this->apiKey = $apiKey;
-	}
-	
-	/**
-	*  @param json jsonData
-	*/
-	public function setJsonData($jsonData):void
-	{
-		$this->jsonData = $jsonData;
-	}
-	public function getJsondata()
-	{
-		return $this->jsonData;
-	}
-	/**
-	*  Gets the Response from the API
-	*  @param string cityName 
-	*	@return array
-	*/
-	public function getResponse(string $cityName):array
-	{
-		try 
-		{
-			$param = $this->getParams($cityName);
-			$client = new \GuzzleHttp\Client(['base_uri' => $this->baseUrl]);
+    /**
+     * Set base url
+     *
+     * @param string $baseUrl base url
+     *
+     * @return null
+     */
+    public function setBaseUrl($baseUrl):void
+    {
+        $this->_baseUrl = $baseUrl;
+    }
 
-			$returnData = [];
-			$response = $client->request('GET', $param);
+    /**
+     * Set Api key
+     *
+     * @param string $apiKey base url
+     *
+     * @return null
+     */
+    public function setApiKey($apiKey):void
+    {
+        $this->_apiKey = $apiKey;
+    }
 
-			if($response->getStatusCode() == Response::HTTP_OK){
-				$data = json_decode($response->getBody(),true);
+    /**
+     *  Gets the Response from the API
+     *
+     * @param string $cityName city name
+     *
+     * @return weather|null
+     */
+    public function getResponseObj(string $cityName):?Weather
+    {
+        try {
+            $param = $this->getParams($cityName);
+            $client = new \GuzzleHttp\Client(['base_uri' => $this->_baseUrl]);
 
-				$this->setJsonData($data);
-				return $this->getJsondata();
-			}
-		} catch (\Exception $ex)
-		{
-			throw new \Exception('Response fetch failed');
-		}
+            $returnData = [];
+            $response = $client->request('GET', $param);
 
-		return $returnData;
-	}
+            if ($response->getStatusCode() == Response::HTTP_OK) {
+                $data = json_decode($response->getBody(), true);
 
-	/**
-	* Transform the response to user required format
-	*   @param array data 
-	*	@return array
-	*/
-	public function transformResponse(array $data):array
-	{
-		$this->reqData = $this->getRequriedData();
+                $weatherFactory = new WeatherFactory();
+                $weatherObj = $weatherFactory->getWeatherObj($data, SELF::SOURCE_NAME);
 
-		return $this->reqData;
-	}
+                return $weatherObj;
+            }
+        } catch (\Exception $ex) {
+            throw new \Exception('Response fetch failed');
+        }
 
-	/**
-	*  Makes the Params list for fetching the api response
-	*  @param String cityName
-	*  @return string
-	*/
-	public function getParams(string $cityName):string
-	{
-		$param = '?q='.$cityName.'&appid='.$this->apiKey;
+        return null;
+    }
 
-		return $param;
-	}
+    /**
+     * Transform the response to user required format
+     *
+     * @param array $weather weather model
+     *
+     * @return array
+     */
+    public function transformResponse(Weather $weather):array
+    {
+        $data = $weather->applyTransformation();
 
-	/**
-	*	Loop through the json response and fetch only required fields
-	*/
-	public function getRequriedData()
-	{
-		$reqData = [] ;
-		// Loop through the json and fetch only the required fields
-		foreach($this->jsonData as $ky =>$list)
-		{
-			if(in_array($ky,array_keys(AppConstants::REQ_FIELDS)))
-			{
-				$val = $list;
-				
-				if($ky == AppConstants::CONVERT_FIELDS)
-				{
-					// use only main for field
-					$val = $list[0]['main'];
-				}
-				if($ky == AppConstants::FORMAT_FIELD_MAIN)
-				{
-					$val[AppConstants::FORMAT_FIELDS]= $this->getDirection($val[AppConstants::FORMAT_FIELDS]);
-				}
-				$reqData[AppConstants::REQ_FIELDS[$ky]]=$val;
-			}
+        return $data;
+    }
 
-			if(is_array($list))
-			{
-				foreach($list as $j=>$val)
-				{
-					if(in_array($j,array_keys(AppConstants::REQ_FIELDS)))
-					{
-						if(is_string($j))
-						{
-							$reqData[AppConstants::REQ_FIELDS[$j]]=$val;
-						}
-					}
-				}
-			}
-		}
-		return $reqData;
-	}
+    /**
+     *  Makes the Params list for fetching the api response
+     *
+     * @param String $cityName city name 
+     *
+     * @return string
+     */
+    public function getParams(string $cityName):string
+    {
+        $param = '?q='.$cityName.'&appid='.$this->_apiKey;
 
-	/**
-	* return direction based on degree passed
-	* @param string val
-	* @return string
-	*/
-	public function getDirection(string $val):string
-	{
-		$direction ='';
+        return $param;
+    }
 
-		// if degree is greather than 0 and less than 90 , then east direction
-		if($val >0 && $val <=90)
-		{
-			$direction = AppConstants::DIR_EAST;
-		} elseif($val >90 && $val <= 180)
-		{
-			$direction = AppConstants::DIR_SOUTH;
-		} elseif($val > 180 && $val < 270)
-		{
-			$direction = AppConstants::DIR_WEST;
-		} elseif($val > 270 && $val <= 360)
-		{
-			$direction = AppConstants::DIR_NORTH;
-		} 
-
-		return $direction;
-	}
+    
 }

@@ -1,40 +1,77 @@
-<?php 
+<?php
+/** 
+ * PHP version 7.2 *
+ *
+ * Weather Service for getting Weather data in requried format
+ *
+ * @category Weather
+ * @package  Open_Weather
+ * @author   Test <testemail@gmail.com>
+ * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @version  GIT: <0.1>
+ * @link     http://localhost
+ */
+
 namespace App\Service;
 
 use App\Constants\WeatherConstants;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use App\Component\Provider\WeatherProvider;
+use App\Factory\WeatherProviderFactoryInterface;
 
-class WeatherService 
+/**
+ * Get weather data service
+ *
+ * @category Weather
+ * @package  Open_Weather
+ * @author   Test <testemail@gmail.com>
+ * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
+ * @link     http://localhost
+ */
+
+class WeatherService
 {
-	public function __construct($baseUrl,$apiKey)
-	{
-		$this->baseUrl = $baseUrl;
-		$this->apiKey = $apiKey;
-	}
-	/*
-	* Gets weather provider 
-	*/
-	public function getWeatherProvider()
-	{
-		$weatherProvider = new WeatherProvider($this->baseUrl,$this->apiKey);
-		$weatherProvider = $weatherProvider->getProvider(WeatherConstants::OPEN_WEATHER);
+    /**
+     * Gets weather provider
+     *
+     * @param string $baseUrl base url
+     * @param string $apiKey  api key    
+     */
+    public function __construct($baseUrl, $apiKey)
+    {
+        $this->baseUrl = $baseUrl;
+        $this->apiKey = $apiKey;
+    }
 
-		return $weatherProvider;
-	}
-	/**
-	* get weather information for a city
-	*  @Param string cityName 
-	*	@return array
-	*/
-	public function getWeatherData(string $cityName) : array
-	{
-		$weatherProvider = $this->getWeatherProvider();
+    /**
+     * Gets weather provider
+     *
+     * @return WeatherProvider
+     */
+    public function getWeatherProvider() : WeatherProviderFactoryInterface
+    {
+        $weatherProvider = new WeatherProvider($this->baseUrl, $this->apiKey);
+        $weatherProvider = $weatherProvider->getProvider(
+            WeatherConstants::OPEN_WEATHER
+        );
 
-		$response = $weatherProvider->getResponse($cityName);
+        return $weatherProvider;
+    }
+    /**
+     * Get weather information for a city
+     *
+     * @param string $cityName city name passed
+     *
+     * @return array
+     */
+    public function getWeatherData(string $cityName) : array
+    {
+        $weatherProvider = $this->getWeatherProvider();
 
-		$weatherData = $weatherProvider->transformResponse($response);
+        $weatherObj = $weatherProvider->getResponseObj($cityName);
 
-		return $weatherData;
-	}
+        $weatherData = $weatherObj->applyTransformation();
+
+        return $weatherObj->getRepresentationData();
+    }
 }
