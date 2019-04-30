@@ -28,19 +28,16 @@ class WeatherOutput
     /**
      * WeatherType 
      *
-     * @ORM\Column(type="string")
      */
     public $weatherType;
      /**
       * Temparature
       *
-      * @ORM\Column(type="string")
       */
     public $temperature;
      /**
       * Wind
       *
-      * @ORM\Column(type="json_array")
       */
     public $wind;
 
