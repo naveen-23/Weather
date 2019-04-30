@@ -31,6 +31,9 @@ use App\Constants\AppConstants;
  * @link     http://localhost
  */
 
+/**
+ * @Route("/api/v{no}")
+ */
 class WeatherController extends AbstractController
 {
 
@@ -43,7 +46,7 @@ class WeatherController extends AbstractController
      *
      * @return Symfony\Component\HttpFoundation\JsonResponse
      *
-     * @Route("/api/v{no}/get-weather/{cityName}", 
+     * @Route("/get-weather/{cityName}", 
                 name="get_weather", methods={"GET"})
      *  Get weather information based on city name
      */
