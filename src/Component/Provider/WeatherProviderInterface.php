@@ -28,6 +28,8 @@ use App\Factory\WeatherProviderFactoryInterface;
 interface WeatherProviderInterface
 {
     /**
+     * Get Provider for Weather info 
+     *
      * @param int $type provider type
      *
      * @return WeatherProviderFactoryInterface

@@ -15,6 +15,7 @@
 namespace App\Factory;
 
 use App\Entity\Weather;
+use App\DTO\WeatherOutput;
 
 /**
  * Weather provider interface
@@ -59,7 +60,7 @@ interface WeatherProviderFactoryInterface
      *
      * @param array $weather weather model
      *
-     * @return null
+     * @return WeatherOutput
      */
-    public function transformResponse(Weather $weather):void;
+    public function transformResponse(Weather $weather):WeatherOutput;
 }

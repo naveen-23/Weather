@@ -50,24 +50,10 @@ class WeatherController extends AbstractController
     public function getWeatherAction(Request $request, string $cityName, 
         WeatherService $weatherService
     ) : JsonResponse {
-        $cityName = $this->_validateRequestData($cityName);
 
         $data = $weatherService->getWeatherData($cityName);
 
         return $this->json($data);
     }
 
-    /**
-     * Validate the city name passed
-     *
-     * @param string $cityName name of city
-     *
-     * @return string 
-     */
-    private function _validateRequestData(string $cityName) :string
-    {
-        $cityName = filter_var($cityName, FILTER_SANITIZE_STRING);
-
-        return $cityName;
-    }
 }

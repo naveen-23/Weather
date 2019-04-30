@@ -17,9 +17,10 @@ namespace App\Factory;
 use GuzzleHttp\Client;
 use Symfony\Component\HttpFoundation\Response;
 use App\Constants\AppConstants;
-use App\Factory\WeatherFactory;
 use App\Entity\Weather;
-
+use App\DTO\WeatherDTO;
+use App\DTO\WeatherOutputTransform;
+use App\DTO\WeatherOutput;
 
 /**
  * Open weather provider 
@@ -79,10 +80,10 @@ class OpenWeather implements WeatherProviderFactoryInterface
             $response = $client->request('GET', $param);
 
             if ($response->getStatusCode() == Response::HTTP_OK) {
-                $data = json_decode($response->getBody(), true);
+                $data = $response->getBody(); //json_decode($response->getBody(), true);
 
-                $weatherFactory = new WeatherFactory();
-                $weatherObj = $weatherFactory->getWeatherObj($data, SELF::SOURCE_NAME);
+                $weatherDTO = new WeatherDTO();
+                $weatherObj = $weatherDTO->transform($data, 'json');
 
                 return $weatherObj;
             }
@@ -98,11 +99,12 @@ class OpenWeather implements WeatherProviderFactoryInterface
      *
      * @param array $weather weather model
      *
-     * @return null
+     * @return weatherOutput
      */
-    public function transformResponse(Weather $weather):void
+    public function transformResponse(Weather $weather):WeatherOutput
     {
-        $this->applyTransformation($weather);
+        $wetherOutput = $this->applyTransformation($weather);
+        return $weatherOutput;
     }
 
     /**
@@ -121,67 +123,20 @@ class OpenWeather implements WeatherProviderFactoryInterface
 
     /**
      *    Loop through the json response and fetch only required fields
+     *
      * @param Weather $weather weather object
      *
-     * @return null
+     * @return WeatherOutput
      */
-    public function applyTransformation($weather):void
+    public function applyTransformation($weather):WeatherOutput
     {
-        $representationData = [] ;
+        $weatherOutputDTO = new WeatherOutputTransform();
+        $weatherOutput = $weatherOutputDTO->transform($weather, 'json');
 
-        // Loop through the json and fetch only the required fields
-        foreach ($weather->getResponse() as $ky =>$list) {
-            if (in_array($ky, array_keys(AppConstants::REQ_FIELDS))) {
-                $val = $list;
-                
-                if ($ky == AppConstants::CONVERT_FIELDS) {
-                    // use only main for field
-                    $val = $list[0]['main'];
-                }
-                if ($ky == AppConstants::FORMAT_FIELD_MAIN) {
-                    $val[AppConstants::FORMAT_FIELDS] = $this->getDirection($val[AppConstants::FORMAT_FIELDS]);
-                }
-                $representationData[AppConstants::REQ_FIELDS[$ky]]=$val;
-            }
-
-            if (is_array($list)) {
-                foreach ($list as $j=>$val) {
-                    if (in_array($j, array_keys(AppConstants::REQ_FIELDS))) {
-                        if (is_string($j)) {
-                            $representationData[AppConstants::REQ_FIELDS[$j]]=$val;
-                        }
-                    }
-                }
-            }
-        }
-
-        $weather->setRepresentationData($representationData);
+        return $weatherOutput;
     }
 
-    /**
-     * Return direction based on degree passed
-     *
-     * @param string $degree degree
-     *
-     * @return string
-     */
-    public function getDirection(string $degree):string
-    {
-        $direction ='';
-
-        // if degree is greather than 0 and less than 90 , then east direction
-        if ($degree >0 && $degree <=90) {
-            $direction = AppConstants::DIR_EAST;
-        } elseif ($degree >90 && $degree <= 180) {
-            $direction = AppConstants::DIR_SOUTH;
-        } elseif ($degree > 180 && $degree < 270) {
-            $direction = AppConstants::DIR_WEST;
-        } elseif ($degree > 270 && $degree <= 360) {
-            $direction = AppConstants::DIR_NORTH;
-        }
-
-        return $direction;
-    }
+    
 
     
 }

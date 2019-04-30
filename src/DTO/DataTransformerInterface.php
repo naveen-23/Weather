@@ -1,8 +1,8 @@
-<?php
+<?php 
 /** 
  * PHP version 7.2 *
  *
- * Component for Weather provider
+ * Weather Service for getting Weather data in requried format
  *
  * @category Weather
  * @package  Open_Weather
@@ -11,12 +11,11 @@
  * @version  GIT: <0.1>
  * @link     http://localhost
  */
+namespace App\DTO;
 
-namespace App\Factory;
-use App\Entity\Weather;
 
 /**
- * Weather object interface
+ * Interface for Data transform from api response
  *
  * @category Weather
  * @package  Open_Weather
@@ -24,16 +23,17 @@ use App\Entity\Weather;
  * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
  * @link     http://localhost
  */
-
-class WeatherFactoryInterface
+interface DataTransformerInterface
 {
-    /** 
-     * Get weather object
+    
+    /**
+     * Transform Response to object
      *
-     * @return Weather
+     * @param mixed  $data    data 
+     * @param string $to      type 
+     * @param array  $context context 
+     *
+     * @return mixed
      */
-    public function getWeatherObj():Weather
-    {
-        
-    }
+    public function transform($data,string $to,array $context = []);
 }

@@ -1,8 +1,8 @@
-<?php
+<?php 
 /** 
  * PHP version 7.2 *
  *
- * Weather Service for getting Weather data in requried format
+ * Weather Output DTO for Response output
  *
  * @category Weather
  * @package  Open_Weather
@@ -11,13 +11,10 @@
  * @version  GIT: <0.1>
  * @link     http://localhost
  */
-
-namespace App\Factory;
-
-use App\Entity\Weather;
+namespace App\DTO;
 
 /**
- * Weather object factory
+ * Weather Output format
  *
  * @category Weather
  * @package  Open_Weather
@@ -25,19 +22,26 @@ use App\Entity\Weather;
  * @license  http://opensource.org/licenses/gpl-license.php GNU Public License
  * @link     http://localhost
  */
-  
-class WeatherFactory
+
+class WeatherOutput
 {
-    /** 
-     * Get weather object
+    /**
+     * WeatherType 
      *
-     * @param array  $data   weather data
-     * @param string $source source name
-     *
-     * @return Weather
+     * @ORM\Column(type="string")
      */
-    public function getWeatherObj(array $data,string $source):Weather
-    {
-        return new Weather($data, $source);
-    }
+    public $weatherType;
+     /**
+      * Temparature
+      *
+      * @ORM\Column(type="string")
+      */
+    public $temperature;
+     /**
+      * Wind
+      *
+      * @ORM\Column(type="json_array")
+      */
+    public $wind;
+
 }

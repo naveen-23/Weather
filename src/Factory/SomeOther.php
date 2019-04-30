@@ -15,8 +15,9 @@
 namespace App\Factory;
 
 use Symfony\Component\HttpFoundation\JsonResponse;
-use App\Factory\WeatherFactory;
 use App\Entity\Weather;
+use App\DTO\WeatherOutput;
+use App\DTO\WeatherOutputTransform;
 
 /**
  * Some other provider 
@@ -64,11 +65,11 @@ class SomeOther implements WeatherProviderFactoryInterface
      * @return Weather|null
      */
     public function getResponseObj(string $cityName):Weather
-    {
-        $weatherFactory = new WeatherFactory();
-        $weatherObj = $weatherFactory->getWeatherObj(
-            $data, SELF::SOURCE_NAME
-        );
+    {   
+        $data = [];
+        $weatherDTO = new WeatherDTO();
+        $weatherObj = $weatherDTO->transform($data, 'json');
+
         return $weatherObj;
     }
 
@@ -77,10 +78,13 @@ class SomeOther implements WeatherProviderFactoryInterface
      *
      * @param array $weather weather model
      *
-     * @return null
+     * @return WeatherOutput
      */
-    public function transformResponse(Weather $weather):void
+    public function transformResponse(Weather $weather):WeatherOutput
     {
-        $weather->applyTransformation();
+        $weatherOutputDTO = new WeatherOutputTransform();
+        $weatherOutput = $weatherOutputDTO->transform($weather, 'json');
+
+        return $weatherOutput;
     }
 }

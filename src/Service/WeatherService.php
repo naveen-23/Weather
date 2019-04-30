@@ -21,7 +21,7 @@ use App\Factory\WeatherProviderFactoryInterface;
 use Symfony\Component\Serializer\Encoder\JsonEncoder;
 use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 use Symfony\Component\Serializer\Serializer;
-
+use App\DTO\WeatherOutput;
 
 /**
  * Get weather data service
@@ -66,22 +66,25 @@ class WeatherService
      *
      * @param string $cityName city name passed
      *
-     * @return array
+     * @return string
      */
-    public function getWeatherData(string $cityName) : ?array
+    public function getWeatherData(string $cityName) : ?WeatherOutput
     {
+        $cityName = filter_var($cityName, FILTER_SANITIZE_STRING);
+
         $weatherProvider = $this->getWeatherProvider();
 
         $weatherObj = $weatherProvider->getResponseObj($cityName);
 
-        $weatherProvider->applyTransformation($weatherObj);
+        $weatherOutput = $weatherProvider->applyTransformation($weatherObj);
+        
         $encoders = [ new JsonEncoder()];
         $normalizers = [new ObjectNormalizer()];
 
         $serializer = new Serializer($normalizers, $encoders);
         
-        $jsonContent = $serializer->serialize($weatherObj, 'json', ['groups' => 'admins']);
-        $data = json_decode($jsonContent,true);
-        return $data['representationData'];
+        $jsonContent = $serializer->serialize($weatherOutput, 'json');
+
+        return $weatherOutput;
     }
 }

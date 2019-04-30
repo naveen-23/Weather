@@ -48,6 +48,75 @@ class Weather
     private $_response;
 
     /**
+     * Coordinates
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $_coord;
+    /**
+     * Weather
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $_weather;
+    /**
+     * Base
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $_base;
+    /**
+     * Main
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $_main;
+    /**
+     * Visibility
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $_visibility;
+    /**
+     * Wind
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $_wind;
+    /**
+     * Clouds
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $_clouds;
+    /**
+     * Dt
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $_dt;
+    /**
+     * Sys
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $_sys;
+    
+    /**
+     * Name
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $_name;
+    /**
+     * Cod
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $_cod;
+
+
+    /**
      * Source of weather
      *
      * @ORM\Column(type="string", length=255)
@@ -77,17 +146,6 @@ class Weather
      */
     private $_updatedAt;
 
-    /** 
-     * Get weather object
-     *
-     * @param array  $data   weather data
-     * @param string $source source name
-     */
-    public function __construct(array $data,string $source)
-    {
-        $this->_response = $data; //json_encode($data,true);
-        $this->_source = $source;
-    }
     /** 
      * Get id of the object
      *
@@ -214,4 +272,270 @@ class Weather
     {
         $this->_representationData = $representationData;
     }
+
+    /**
+     * Get Coordinates 
+     *
+     * @return mixed
+     */
+    public function getCoord()
+    {
+        return $this->_coord;
+    }
+
+    /**
+     * Set Coordinates 
+     *
+     * @param mixed $_coord coord
+     *
+     * @return self
+     */
+    public function setCoord($_coord)
+    {
+        $this->_coord = $_coord;
+
+        return $this;
+    }
+
+    /**
+     * Get Weather
+     *
+     * @return mixed
+     */
+    public function getWeather()
+    {
+        return $this->_weather;
+    }
+
+    /**
+     * Set Weather
+     *
+     * @param mixed $_weather weather
+     *
+     * @return self
+     */
+    public function setWeather($_weather)
+    {
+        $this->_weather = $_weather;
+
+        return $this;
+    }
+
+    /**
+     * Get Base
+     *
+     * @return mixed
+     */
+    public function getBase()
+    {
+        return $this->_base;
+    }
+
+    /**
+     * Set Base
+     *
+     * @param mixed $_base base
+     *
+     * @return self
+     */
+    public function setBase($_base)
+    {
+        $this->_base = $_base;
+
+        return $this;
+    }
+
+    /**
+     * Get Main
+     *
+     * @return mixed
+     */
+    public function getMain()
+    {
+        return $this->_main;
+    }
+
+    /**
+     * Set Main
+     *
+     * @param mixed $_main main
+     *
+     * @return self
+     */
+    public function setMain($_main)
+    {
+        $this->_main = $_main;
+
+        return $this;
+    }
+
+    /**
+     * Get Visibility
+     *
+     * @return mixed
+     */
+    public function getVisibility()
+    {
+        return $this->_visibility;
+    }
+
+    /**
+     * Set Visibility
+     *
+     * @param mixed $_visibility visibility
+     *
+     * @return self
+     */
+    public function setVisibility($_visibility)
+    {
+        $this->_visibility = $_visibility;
+
+        return $this;
+    }
+
+    /**
+     * Get Wind
+     *
+     * @return mixed
+     */
+    public function getWind()
+    {
+        return $this->_wind;
+    }
+
+    /**
+     * Set Wind
+     *
+     * @param mixed $_wind wind
+     *
+     * @return self
+     */
+    public function setWind($_wind)
+    {
+        $this->_wind = $_wind;
+
+        return $this;
+    }
+
+    /**
+     * Get Clouds
+     *
+     * @return mixed
+     */
+    public function getClouds()
+    {
+        return $this->_clouds;
+    }
+
+    /**
+     * Set Clouds
+     *
+     * @param mixed $_clouds clouds 
+     *
+     * @return self
+     */
+    public function setClouds($_clouds)
+    {
+        $this->_clouds = $_clouds;
+
+        return $this;
+    }
+
+    /**
+     * Get Dt
+     *
+     * @return mixed
+     */
+    public function getDt()
+    {
+        return $this->_dt;
+    }
+
+    /**
+     * Set Dt
+     *
+     * @param mixed $_dt dt
+     *
+     * @return self
+     */
+    public function setDt($_dt)
+    {
+        $this->_dt = $_dt;
+
+        return $this;
+    }
+
+    /**
+     * Get Sys
+     *
+     * @return mixed
+     */
+    public function getSys()
+    {
+        return $this->_sys;
+    }
+
+    /**
+     * Set sys
+     *
+     * @param mixed $_sys sys
+     *
+     * @return self
+     */
+    public function setSys($_sys)
+    {
+        $this->_sys = $_sys;
+
+        return $this;
+    }
+
+    /**
+     * Get Name
+     *
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->_name;
+    }
+
+    /**
+     * Set Name
+     *
+     * @param mixed $_name name 
+     *
+     * @return self
+     */
+    public function setName($_name)
+    {
+        $this->_name = $_name;
+
+        return $this;
+    }
+
+    /**
+     * Get Cod
+     *
+     * @return mixed
+     */
+    public function getCod()
+    {
+        return $this->_cod;
+    }
+
+    /**
+     * Set Cod
+     *
+     * @param mixed $_cod cod
+     *
+     * @return self
+     */
+    public function setCod($_cod)
+    {
+        $this->_cod = $_cod;
+
+        return $this;
+    }
+
+
 }
